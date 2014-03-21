@@ -1,16 +1,16 @@
 package guacaloco.model;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
-public class VSphereModel implements IVMwareEntity{
+public class VSphereModel extends VMwareEntity{
 
     private static VSphereModel instance;
-    protected Set<IVMwareEntity> children = new LinkedHashSet<IVMwareEntity>();
     
     private VSphereModel() {
-        
+        super(null);
     }
 
     public static VSphereModel getInstance() {
@@ -20,23 +20,27 @@ public class VSphereModel implements IVMwareEntity{
         return instance;
     }
 
-    @Override
-    public IVMwareEntity getParent() {
-        return null;
-    }
-
-    @Override
-    public IVMwareEntity[] getChildren() {
-        return children.toArray(new IVMwareEntity[0]);
-    }
-
-    @Override
-    public String getName() {
-        return null;
+    public boolean isEmpty() {
+        return getChildren().length == 0;
     }
     
-    public boolean isEmpty() {
-        return children.size() == 0;
+    public void addVC(VirtualCenter vc) {
+        addChildren(vc);
+    }
+    
+    public void removeVC(VirtualCenter vc) {
+        removeChildren(vc);
+        vc.setParent(null);
+    }
+
+    public Collection<VirtualCenter> getVCs() {
+        List<VirtualCenter> vcs = new ArrayList<VirtualCenter>();
+        for(IVMwareEntity child: getChildren()) {
+            if (child instanceof Cluster) {
+                vcs.add((VirtualCenter)child);
+            }
+        }
+        return vcs;
     }
 
 }

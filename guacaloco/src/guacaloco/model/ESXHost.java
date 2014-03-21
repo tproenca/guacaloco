@@ -6,22 +6,22 @@ import java.util.List;
 
 public class ESXHost extends VMwareEntity {
     
-    public ESXHost(IVMwareEntity parent) {
+    public ESXHost(VMwareEntity parent) {
         super(parent);
-        ((VMwareEntity)parent).children.add(this);
+        parent.addChildren(this);
     }
     
     public void addVM(VirtualMachine vm) {
-        children.add(vm);
+        addChildren(vm);
     }
     
     public void removeVM(VirtualMachine vm) {
-        children.remove(vm);
+        removeChildren(vm);
     }
 
     public Collection<VirtualMachine> getVMs() {
         List<VirtualMachine> vms = new ArrayList<VirtualMachine>();
-        for(IVMwareEntity child: children) {
+        for(IVMwareEntity child: getChildren()) {
             if (child instanceof VirtualMachine) {
                 vms.add((VirtualMachine)child);
             }

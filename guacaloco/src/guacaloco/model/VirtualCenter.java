@@ -6,22 +6,22 @@ import java.util.List;
 
 public class VirtualCenter extends VMwareEntity {
 
-    public VirtualCenter(IVMwareEntity parent) {
+    public VirtualCenter(VMwareEntity parent) {
         super(parent);
-        ((VSphereModel)parent).children.add(this);
+        parent.addChildren(this);
     }
 
     public void addDataCenter(DataCenter datacenter) {
-        children.add(datacenter);
+        addChildren(datacenter);
     }
     
     public void removeDataCenter(DataCenter datacenter) {
-        children.remove(datacenter);
+        removeChildren(datacenter);
     }
 
     public Collection<DataCenter> getDataCenter() {
         List<DataCenter> datacenters = new ArrayList<DataCenter>();
-        for(IVMwareEntity child: children) {
+        for(IVMwareEntity child: getChildren()) {
             if (child instanceof DataCenter) {
                 datacenters.add((DataCenter)child);
             }
