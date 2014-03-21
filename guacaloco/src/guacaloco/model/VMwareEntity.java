@@ -3,16 +3,19 @@ package guacaloco.model;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.vmware.vim25.ObjectContent;
+
 public abstract class VMwareEntity implements IVMwareEntity {
 
     private IVMwareEntity parent;
     protected Set<IVMwareEntity> children = new LinkedHashSet<IVMwareEntity>();
     private String name;
-    
+    private ObjectContent objectContent;
+
     public VMwareEntity(IVMwareEntity parent) {
         this.parent = parent;
     }
-    
+
     public VMwareEntity(IVMwareEntity parent, IVMwareEntity child) {
         this.parent = parent;
     }
@@ -35,4 +38,13 @@ public abstract class VMwareEntity implements IVMwareEntity {
     public void setName(String name) {
         this.name = name;
     }
+
+    public ObjectContent getObjectContent() {
+        return objectContent;
+    }
+
+    public void setObjectContent(ObjectContent objectContent) {
+        this.objectContent = objectContent;
+    }
+
 }
