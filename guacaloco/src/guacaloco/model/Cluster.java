@@ -6,22 +6,22 @@ import java.util.List;
 
 public class Cluster extends VMwareEntity {
 
-    public Cluster(IVMwareEntity parent) {
+    public Cluster(VMwareEntity parent) {
         super(parent);
-        ((VMwareEntity)parent).children.add(this);
+        parent.addChildren(this);
     }
 
     public void addESXHost(ESXHost host) {
-        children.add(host);
+        addChildren(host);
     }
     
     public void removeESXHost(ESXHost host) {
-        children.remove(host);
+        removeChildren(host);
     }
 
     public Collection<ESXHost> getESXHosts() {
         List<ESXHost> esxs = new ArrayList<ESXHost>();
-        for(IVMwareEntity child: children) {
+        for(IVMwareEntity child: getChildren()) {
             if (child instanceof ESXHost) {
                 esxs.add((ESXHost)child);
             }
@@ -30,16 +30,16 @@ public class Cluster extends VMwareEntity {
     }
     
     public void addVM(VirtualMachine vm) {
-        children.add(vm);
+        addChildren(vm);
     }
     
     public void removeVM(VirtualMachine vm) {
-        children.remove(vm);
+        removeChildren(vm);
     }
 
     public Collection<VirtualMachine> getVMs() {
         List<VirtualMachine> vms = new ArrayList<VirtualMachine>();
-        for(IVMwareEntity child: children) {
+        for(IVMwareEntity child: getChildren()) {
             if (child instanceof VirtualMachine) {
                 vms.add((VirtualMachine)child);
             }

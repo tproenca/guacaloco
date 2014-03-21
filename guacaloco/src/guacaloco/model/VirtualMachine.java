@@ -2,8 +2,8 @@ package guacaloco.model;
 
 public class VirtualMachine extends VMwareEntity {
     
-    public VirtualMachine(IVMwareEntity parent) {
+    public VirtualMachine(VMwareEntity parent) {
        super(parent);
-       ((VMwareEntity)parent).children.add(this);
+       parent.addChildren(this);
     }
 }
