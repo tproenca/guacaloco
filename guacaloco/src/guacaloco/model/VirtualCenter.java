@@ -8,8 +8,9 @@ public class VirtualCenter extends VMwareEntity {
 
     public VirtualCenter(IVMwareEntity parent) {
         super(parent);
+        ((VSphereModel)parent).children.add(this);
     }
-    
+
     public void addDataCenter(DataCenter datacenter) {
         children.add(datacenter);
     }

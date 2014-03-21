@@ -3,23 +3,26 @@ package guacaloco.model;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public abstract class VMwareEntity implements IVMwareEntity {
 
-    private IVMwareEntity parent;
+public class VSphereModel implements IVMwareEntity{
+
+    private static VSphereModel instance;
     protected Set<IVMwareEntity> children = new LinkedHashSet<IVMwareEntity>();
-    private String name;
     
-    public VMwareEntity(IVMwareEntity parent) {
-        this.parent = parent;
+    private VSphereModel() {
+        
     }
-    
-    public VMwareEntity(IVMwareEntity parent, IVMwareEntity child) {
-        this.parent = parent;
+
+    public static VSphereModel getInstance() {
+        if (instance == null) {
+            instance = new VSphereModel();
+        }
+        return instance;
     }
 
     @Override
     public IVMwareEntity getParent() {
-        return parent;
+        return null;
     }
 
     @Override
@@ -29,10 +32,11 @@ public abstract class VMwareEntity implements IVMwareEntity {
 
     @Override
     public String getName() {
-        return name;
+        return null;
+    }
+    
+    public boolean isEmpty() {
+        return children.size() == 0;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 }

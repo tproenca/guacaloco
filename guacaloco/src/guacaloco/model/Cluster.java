@@ -8,6 +8,7 @@ public class Cluster extends VMwareEntity {
 
     public Cluster(IVMwareEntity parent) {
         super(parent);
+        ((VMwareEntity)parent).children.add(this);
     }
 
     public void addESXHost(ESXHost host) {
@@ -26,5 +27,23 @@ public class Cluster extends VMwareEntity {
             }
         }
         return esxs;
+    }
+    
+    public void addVM(VirtualMachine vm) {
+        children.add(vm);
+    }
+    
+    public void removeVM(VirtualMachine vm) {
+        children.remove(vm);
+    }
+
+    public Collection<VirtualMachine> getVMs() {
+        List<VirtualMachine> vms = new ArrayList<VirtualMachine>();
+        for(IVMwareEntity child: children) {
+            if (child instanceof VirtualMachine) {
+                vms.add((VirtualMachine)child);
+            }
+        }
+        return vms;
     }
 }

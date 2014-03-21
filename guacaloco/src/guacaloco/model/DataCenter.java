@@ -8,6 +8,7 @@ public class DataCenter extends VMwareEntity {
 
     public DataCenter(IVMwareEntity parent) {
         super(parent);
+        ((VMwareEntity)parent).children.add(this);
     }
 
     public void addESXHost(ESXHost host) {

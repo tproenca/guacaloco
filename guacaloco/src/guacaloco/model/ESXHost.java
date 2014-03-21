@@ -8,6 +8,7 @@ public class ESXHost extends VMwareEntity {
     
     public ESXHost(IVMwareEntity parent) {
         super(parent);
+        ((VMwareEntity)parent).children.add(this);
     }
     
     public void addVM(VirtualMachine vm) {
