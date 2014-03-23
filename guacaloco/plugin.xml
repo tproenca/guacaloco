@@ -5,7 +5,7 @@
          point="org.eclipse.ui.views">
       <category
             id="guacaloco"
-            name="vSphere Code Sample Toolkit">
+            name="vSphere Toolkit">
       </category>
       <view
             allowMultiple="false"
@@ -13,7 +13,7 @@
             class="guacaloco.views.GuacalocoView"
             icon="icons/vmware.png"
             id="guacaloco.views.Guacaloco"
-            name="vSphere Virtual Center Explorer">
+            name="vSphere Explorer">
       </view>
    </extension>
 

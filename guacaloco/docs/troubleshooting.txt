@@ -1,0 +1,5 @@
+Problem: Dealing with “java.lang.OutOfMemoryError: PermGen space” error
+Solution: 
+* Go to “Run Configurations...”
+* Go to tab “Arguments”
+* Add the following VM arguments: “-XX:MaxPermSize=512m -XX:PermSize=512m”

@@ -25,9 +25,11 @@ public class GuacalocoView extends ViewPart {
         DataAccessService dataAccessService = new DataAccessService();
         try {
             dataAccessService.populateModel();
+            System.out.println();
         } catch (VsphereToolkitException e) {
             e.printStackTrace();
         }
+
 //        VSphereModel model = VSphereModel.getInstance();
 //        if (model.isEmpty()) {
 //            VirtualCenter vc = new VirtualCenter(model);
