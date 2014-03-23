@@ -18,20 +18,24 @@ import com.vmware.vim25.ObjectContent;
 
 public class DataAccessService {
 
-    private static final String SERVER_NAME = "10.20.77.44";
-    private static final String USER_NAME = "root";
-    private static final String PASSWORD = "vmware";
+    public static final String SERVER_NAME = "10.20.77.44";
+    public static final String USER_NAME = "root";
+    public static final String PASSWORD = "vmware";
 
     public static void main(String[] args) throws Exception {
+        // create and initialize singleton connection with server
+        VmwareManagerConnection managerConnection = VmwareManagerConnection.getInstance();
+        managerConnection.init(DataAccessService.SERVER_NAME, DataAccessService.USER_NAME,
+                DataAccessService.PASSWORD);
+
         DataAccessService dataAccessService = new DataAccessService();
         dataAccessService.populateModel();
+
+        System.out.println();
     }
 
     public void populateModel() throws VsphereToolkitException {
         VSphereModel model = VSphereModel.getInstance();
-        // create and initialize singleton connection with server
-        VmwareManagerConnection managerConnection = VmwareManagerConnection.getInstance();
-        managerConnection.init(SERVER_NAME, USER_NAME, PASSWORD);
         // using Breadth-First Traversal method to populate the vSphere model
         // create virtual center
         VirtualCenter vc = createVirtualCenter();
