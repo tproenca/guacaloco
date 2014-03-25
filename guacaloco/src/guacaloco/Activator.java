@@ -88,6 +88,11 @@ public class Activator extends AbstractUIPlugin {
         desc = ImageDescriptor.createFromURL(FileLocator.find(bundle, path,
                 null));
         reg.put(ISharedImages.IMG_VC_VCENTER, desc);
+        
+        path = new Path("icons/vcenter_wizard.png");
+        desc = ImageDescriptor.createFromURL(FileLocator.find(bundle, path,
+                null));
+        reg.put(ISharedImages.IMG_VC_VCENTER_WIZARD, desc);
 
         path = new Path("icons/vm.png");
         desc = ImageDescriptor.createFromURL(FileLocator.find(bundle, path,
