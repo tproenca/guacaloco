@@ -32,7 +32,8 @@ public class VmwareManagerConnection {
                 this.password = password;
                 this.isConnected = true;
             } catch (Exception e) {
-                throw new VsphereToolkitException("Unable to stabilsh connection", e);
+                e.printStackTrace();
+                throw new VsphereToolkitException("Unable to establish connection! Please verify your credentials", e);
             }
         }
     }
@@ -65,11 +66,11 @@ public class VmwareManagerConnection {
         this.password = password;
     }
 
-    public Boolean getIsConnected() {
+    public Boolean isConnected() {
         return isConnected;
     }
 
-    public void setIsConnected(Boolean isConnected) {
+    protected void setConnected(Boolean isConnected) {
         this.isConnected = isConnected;
     }
 
