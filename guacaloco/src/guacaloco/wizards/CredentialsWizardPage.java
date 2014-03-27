@@ -79,7 +79,7 @@ public class CredentialsWizardPage extends WizardPage {
                 dialogChanged();
             }
         });
-        setPageComplete(false);
+        setPageComplete(!server.isEmpty()&&!userId.isEmpty()&&!password.isEmpty());
         // dialogChanged();
     }
 
