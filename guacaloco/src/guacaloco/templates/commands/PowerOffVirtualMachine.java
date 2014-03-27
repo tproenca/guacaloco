@@ -6,14 +6,10 @@ import guacaloco.core.VsphereToolkitException;
 import guacaloco.core.utils.VMwareConnection;
 import guacaloco.templates.commands.utils.TaskUtils;
 
-import com.vmware.vim25.InvalidCollectorVersionFaultMsg;
-import com.vmware.vim25.InvalidPropertyFaultMsg;
-import com.vmware.vim25.InvalidStateFaultMsg;
 import com.vmware.vim25.LocalizedMethodFault;
 import com.vmware.vim25.ManagedObjectReference;
 import com.vmware.vim25.RuntimeFaultFaultMsg;
 import com.vmware.vim25.ServiceContent;
-import com.vmware.vim25.TaskInProgressFaultMsg;
 import com.vmware.vim25.TaskInfoState;
 import com.vmware.vim25.VimPortType;
 
@@ -57,21 +53,10 @@ public class PowerOffVirtualMachine {
                 }
             }
 
-        } catch (RuntimeFaultFaultMsg e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new VsphereToolkitException("Unable to find the virtual machine", e.getCause());
-        } catch (InvalidStateFaultMsg e) {
-            e.printStackTrace();
-            throw new VsphereToolkitException("Unable to power off virtual machine", e.getCause());
-        } catch (TaskInProgressFaultMsg e) {
-            e.printStackTrace();
-            throw new VsphereToolkitException("Unable to power on virtual machine", e.getCause());
-        } catch (InvalidPropertyFaultMsg e) {
-            e.printStackTrace();
-        } catch (InvalidCollectorVersionFaultMsg e) {
-            e.printStackTrace();
         }
-
     }
 
     private ManagedObjectReference findVirtualMachine() throws RuntimeFaultFaultMsg {

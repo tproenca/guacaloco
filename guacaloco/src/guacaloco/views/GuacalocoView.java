@@ -3,12 +3,14 @@ package guacaloco.views;
 import guacaloco.core.DataAccessService;
 import guacaloco.core.VmwareManagerConnection;
 import guacaloco.core.VsphereToolkitException;
+import guacaloco.core.utils.AddSampleIntoProject;
 import guacaloco.model.VSphereModel;
 import guacaloco.wizards.AddVirtualCenterWizard;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -45,16 +47,14 @@ public class GuacalocoView extends ViewPart {
 
     protected void init() {
         try {
-            VmwareManagerConnection conn = VmwareManagerConnection
-                    .getInstance();
+            VmwareManagerConnection conn = VmwareManagerConnection.getInstance();
             if (conn.isConnected()) {
                 DataAccessService dataAccessService = new DataAccessService();
                 dataAccessService.populateModel();
             }
 
         } catch (VsphereToolkitException ex) {
-            MessageDialog.openError(viewer.getControl().getShell(), "Error",
-                    ex.getMessage());
+            MessageDialog.openError(viewer.getControl().getShell(), "Error", ex.getMessage());
         }
     }
 
@@ -82,8 +82,7 @@ public class GuacalocoView extends ViewPart {
             }
         };
         colapseAllAction.setToolTipText("Collapse All");
-        colapseAllAction.setImageDescriptor(PlatformUI.getWorkbench()
-                .getSharedImages()
+        colapseAllAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
                 .getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
         colapseAllAction.setEnabled(false);
 
@@ -96,20 +95,18 @@ public class GuacalocoView extends ViewPart {
             }
         };
         expandAllAction.setToolTipText("Expand All");
-        expandAllAction.setImageDescriptor(AbstractUIPlugin
-                .imageDescriptorFromPlugin("org.eclipse.ui.cheatsheets",
-                        "$nl$/icons/elcl16/expandall.gif"));
+        expandAllAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
+                "org.eclipse.ui.cheatsheets", "$nl$/icons/elcl16/expandall.gif"));
         expandAllAction.setEnabled(false);
 
         createConnectionAction = new Action() {
             @Override
             public void run() {
-                WizardDialog wizardDialog = new WizardDialog(viewer
-                        .getControl().getShell(), new AddVirtualCenterWizard());
+                WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(),
+                        new AddVirtualCenterWizard());
                 if (wizardDialog.open() == Window.OK) {
                     System.out.println("Ok pressed");
-                    UIJob job = new UIJob(
-                            "Fetching data from Virtual Center...") {
+                    UIJob job = new UIJob("Fetching data from Virtual Center...") {
                         @Override
                         public IStatus runInUIThread(IProgressMonitor monitor) {
                             init();
@@ -120,13 +117,22 @@ public class GuacalocoView extends ViewPart {
                     job.schedule();
                 } else {
                     System.out.println("Cancel pressed");
+                    try {
+                        IPackageFragment pack = AddSampleIntoProject
+                                .createPackage("com.vmware.borathon");
+                        ;
+                        AddSampleIntoProject.createJavaClass(pack, "this is the content",
+                                "MyClassName.java");
+                    } catch (VsphereToolkitException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 }
             }
         };
         createConnectionAction.setToolTipText("Create New Connection");
-        createConnectionAction.setImageDescriptor(AbstractUIPlugin
-                .imageDescriptorFromPlugin("org.eclipse.ui",
-                        "$nl$/icons/full/obj16/add_obj.gif"));
+        createConnectionAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
+                "org.eclipse.ui", "$nl$/icons/full/obj16/add_obj.gif"));
     }
 
     private void contributeToActionBars() {
