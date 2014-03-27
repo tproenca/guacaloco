@@ -1,22 +1,32 @@
 package guacaloco.views;
 
+import guacaloco.actions.VMwareEntityAction;
+import guacaloco.actions.vm.VMCloneAction;
+import guacaloco.actions.vm.VMPowerAction;
 import guacaloco.core.DataAccessService;
 import guacaloco.core.VmwareManagerConnection;
 import guacaloco.core.VsphereToolkitException;
 import guacaloco.model.VSphereModel;
 import guacaloco.wizards.AddVirtualCenterWizard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -32,6 +42,8 @@ public class GuacalocoView extends ViewPart {
     private Action expandAllAction;
     private Action createConnectionAction;
 
+    private List<VMwareEntityAction> actions = new ArrayList<VMwareEntityAction>();
+
     @Override
     public void createPartControl(Composite parent) {
         viewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
@@ -40,6 +52,7 @@ public class GuacalocoView extends ViewPart {
 
         makeActions();
         contributeToActionBars();
+        hookContextMenu();
         populate();
     }
 
@@ -119,8 +132,25 @@ public class GuacalocoView extends ViewPart {
             }
         };
         createConnectionAction.setToolTipText("Create New Connection");
-        createConnectionAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
-                "org.eclipse.ui", "$nl$/icons/full/obj16/add_obj.gif"));
+
+        createConnectionAction.setImageDescriptor(AbstractUIPlugin
+                .imageDescriptorFromPlugin("org.eclipse.ui",
+                        "$nl$/icons/full/obj16/add_obj.gif"));
+
+        actions.add(new VMPowerAction(viewer));
+        actions.add(new VMCloneAction(viewer));
+    }
+    private void hookContextMenu() {
+        MenuManager menuMgr = new MenuManager("#PopupMenu");
+        menuMgr.setRemoveAllWhenShown(true);
+        menuMgr.addMenuListener(new IMenuListener() {
+            public void menuAboutToShow(IMenuManager manager) {
+                GuacalocoView.this.fillContextMenu(manager);
+            }
+        });
+        Menu menu = menuMgr.createContextMenu(viewer.getControl());
+        viewer.getControl().setMenu(menu);
+        getSite().registerContextMenu(menuMgr, viewer);
     }
 
     private void contributeToActionBars() {
@@ -132,5 +162,13 @@ public class GuacalocoView extends ViewPart {
         manager.add(colapseAllAction);
         manager.add(expandAllAction);
         manager.add(createConnectionAction);
+    }
+
+    private void fillContextMenu(IMenuManager manager) {
+        for (VMwareEntityAction action : actions) {
+            if (action.isValid()) {
+                manager.add(action);
+            }
+        }
     }
 }

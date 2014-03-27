@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class AddVirtualCenterWizard extends Wizard {
@@ -80,7 +81,7 @@ public class AddVirtualCenterWizard extends Wizard {
             throw new CoreException(status);
         }
 
-        monitor.setTaskName("Connected!");
+        monitor.setTaskName("Connected!");  
         
         Preferences pref = ConfigurationScope.INSTANCE
                 .getNode(Activator.PLUGIN_ID);
@@ -88,5 +89,11 @@ public class AddVirtualCenterWizard extends Wizard {
         cred.put("server", server);
         cred.put("userid", userId);
         cred.put("passwd", password);
+       
+        try {
+            pref.flush();
+        } catch (BackingStoreException e) {
+            e.printStackTrace();
+        }
     }
 }
