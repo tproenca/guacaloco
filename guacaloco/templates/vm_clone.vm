@@ -17,7 +17,7 @@ import com.vmware.vim25.TaskInProgressFaultMsg;
 import com.vmware.vim25.TaskInfoState;
 import com.vmware.vim25.VimPortType;
 
-public class PowerOffVirtualMachine {
+public class $className {
 
     private static final String serverName = $serverName;
     private static final  String userName = $userName;
