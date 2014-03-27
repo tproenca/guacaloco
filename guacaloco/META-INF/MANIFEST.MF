@@ -5,7 +5,8 @@ Bundle-SymbolicName: guacaloco;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: guacaloco.Activator
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.ui.workbench.texteditor;bundle-version="3.8.101"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/vim25.jar,

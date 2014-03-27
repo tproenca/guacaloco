@@ -15,6 +15,7 @@ import java.util.List;
 import com.vmware.vim25.ArrayOfManagedObjectReference;
 import com.vmware.vim25.ManagedObjectReference;
 import com.vmware.vim25.ObjectContent;
+import com.vmware.vim25.VirtualMachinePowerState;
 
 public class DataAccessService {
 
@@ -146,10 +147,14 @@ public class DataAccessService {
             for (ManagedObjectReference vmMOR : vmMORList) {
                 if ("VirtualMachine".equals(vmMOR.getType())) {
                     ObjectContent vmOC = connection.findObject(vmMOR, "name", "summary",
-                            "summary.runtime.powerState");
+                            "summary.config.instanceUuid", "summary.runtime.powerState");
                     String vmName = (String) ObjectUtils.getPropertyObject(vmOC, "name");
+                    String instanceUuid = (String) ObjectUtils.getPropertyObject(vmOC, "summary.config.instanceUuid");
+                    VirtualMachinePowerState powerState = (VirtualMachinePowerState) ObjectUtils.getPropertyObject(vmOC, "summary.runtime.powerState");
                     VirtualMachine vm = new VirtualMachine(esxHost);
                     vm.setName(vmName);
+                    vm.setInstanceUuid(instanceUuid);
+                    vm.setPowerState(powerState);
                     vm.setObjectContent(vmOC);
                     vmList.add(vm);
                 }

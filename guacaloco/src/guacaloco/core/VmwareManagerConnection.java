@@ -22,7 +22,7 @@ public class VmwareManagerConnection {
         return uniqInstance;
     }
 
-    public void init(String serverName, String userName, String password)
+    public VMwareConnection init(String serverName, String userName, String password)
             throws VsphereToolkitException {
         if (connection == null) {
             try {
@@ -36,6 +36,7 @@ public class VmwareManagerConnection {
                 throw new VsphereToolkitException("Unable to establish connection! Please verify your credentials", e);
             }
         }
+        return connection;
     }
 
     public VMwareConnection getConnection() {

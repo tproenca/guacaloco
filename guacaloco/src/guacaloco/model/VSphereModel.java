@@ -42,7 +42,7 @@ public class VSphereModel extends VMwareEntity {
         return vcs;
     }
 
-    // FIXME: We need to change the model, here we have a complexity of [O de 4]
+    // FIXME: PERFORMANCE We need to change the model, here we have a complexity of [O de 4]
     public List<ESXHost> getEsxHosts() {
         List<ESXHost> esxHostList = new ArrayList<ESXHost>();
         for (IVMwareEntity virtualCenter : getChildren()) {
