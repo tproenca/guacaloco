@@ -3,6 +3,9 @@ package guacaloco.wizards;
 import guacaloco.Activator;
 import guacaloco.utils.ISharedImages;
 
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.jface.fieldassist.AutoCompleteField;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -10,8 +13,10 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.service.prefs.Preferences;
 
 public class CredentialsWizardPage extends WizardPage {
 
@@ -47,7 +52,7 @@ public class CredentialsWizardPage extends WizardPage {
         txtServer = new Text(container, SWT.BORDER);
         txtServer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
                 1, 1));
-        txtServer.setText(server);
+//        txtServer.setText(server);
         txtServer.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 dialogChanged();
@@ -60,7 +65,7 @@ public class CredentialsWizardPage extends WizardPage {
         txtUserId = new Text(container, SWT.BORDER);
         txtUserId.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
                 1, 1));
-        txtUserId.setText(userId);
+//        txtUserId.setText(userId);
         txtUserId.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 dialogChanged();
@@ -73,14 +78,25 @@ public class CredentialsWizardPage extends WizardPage {
         txtPassword = new Text(container, SWT.BORDER | SWT.PASSWORD);
         txtPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
                 false, 1, 1));
-        txtPassword.setText(password);
+//        txtPassword.setText(password);
         txtPassword.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 dialogChanged();
             }
         });
+        
+        loadAutoComplete();
         setPageComplete(!server.isEmpty()&&!userId.isEmpty()&&!password.isEmpty());
         // dialogChanged();
+    }
+
+    private void loadAutoComplete() {
+        Preferences pref = ConfigurationScope.INSTANCE
+                .getNode(Activator.PLUGIN_ID);
+        Preferences cred = pref.node("credentials");
+        
+        new AutoCompleteField(txtServer, new CredentialsTextContentAdapter(cred), new String[] 
+                {cred.get("server", "")});
     }
 
     /**
@@ -119,5 +135,20 @@ public class CredentialsWizardPage extends WizardPage {
 
     public String getPassword() {
         return txtPassword.getText();
+    }
+    
+    class CredentialsTextContentAdapter extends TextContentAdapter {
+        private Preferences pref;
+        CredentialsTextContentAdapter(Preferences pref) {
+            this.pref = pref;
+        }
+        @Override
+        public void setControlContents(Control control, String text,
+                int cursorPosition) {
+            txtUserId.setText(pref.get("userid", ""));
+            txtPassword.setText(pref.get("passwd", ""));
+            super.setControlContents(control, text, cursorPosition);
+        }
+        
     }
 }
