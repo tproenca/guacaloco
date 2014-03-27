@@ -16,7 +16,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-public class AddSampleIntoProject {
+public class AddSampleIntoEclipseProject {
 
     public static IPackageFragment createPackage(String packageName) throws VsphereToolkitException {
         IPackageFragment pack = null;

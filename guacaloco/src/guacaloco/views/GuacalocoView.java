@@ -3,14 +3,12 @@ package guacaloco.views;
 import guacaloco.core.DataAccessService;
 import guacaloco.core.VmwareManagerConnection;
 import guacaloco.core.VsphereToolkitException;
-import guacaloco.core.utils.AddSampleIntoProject;
 import guacaloco.model.VSphereModel;
 import guacaloco.wizards.AddVirtualCenterWizard;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -117,16 +115,6 @@ public class GuacalocoView extends ViewPart {
                     job.schedule();
                 } else {
                     System.out.println("Cancel pressed");
-                    try {
-                        IPackageFragment pack = AddSampleIntoProject
-                                .createPackage("com.vmware.borathon");
-                        ;
-                        AddSampleIntoProject.createJavaClass(pack, "this is the content",
-                                "MyClassName.java");
-                    } catch (VsphereToolkitException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
                 }
             }
         };
