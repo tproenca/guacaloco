@@ -1,4 +1,4 @@
-package guacaloco.templates.commands;
+package $packageName;
 
 import com.vmware.vim25.LocalizedMethodFault;
 import com.vmware.vim25.ManagedObjectReference;
@@ -7,15 +7,15 @@ import com.vmware.vim25.ServiceContent;
 import com.vmware.vim25.TaskInfoState;
 import com.vmware.vim25.VimPortType;
 
-public class PowerOffVirtualMachine {
+public class $className {
 
-    private static final String serverName = $serverName;
-    private static final String userName = $userName;
-    private static final String password = $password;
-    private static final String vmUuid = $vmUUID;
+    private static final String serverName = "$serverName";
+    private static final String userName = "$userName";
+    private static final String password = "$password";
+    private static final String vmUuid = "$vmUUID";
 
     public static void main(String[] args) throws VsphereToolkitException {
-        new PowerOffVirtualMachine().execute();
+        new $className().execute();
     }
 
     public void execute() throws VsphereToolkitException {
