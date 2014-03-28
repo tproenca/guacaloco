@@ -17,7 +17,7 @@
  *
  */
 
-package guacaloco.templates.commands;
+package $packageName;
 
 
 import javax.net.ssl.HostnameVerifier;

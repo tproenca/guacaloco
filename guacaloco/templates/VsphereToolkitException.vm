@@ -1,7 +1,7 @@
 /**
  *
  */
-package guacaloco.templates.commands;
+package $packageName;
 
 public class VsphereToolkitException extends Exception {
 

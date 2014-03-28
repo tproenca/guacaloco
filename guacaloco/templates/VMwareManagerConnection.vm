@@ -1,8 +1,8 @@
-package guacaloco.templates.commands;
+package $packageName;
 
-public class VmwareManagerConnection {
+public class VMwareManagerConnection {
 
-    private static VmwareManagerConnection uniqInstance = null;
+    private static VMwareManagerConnection uniqInstance = null;
 
     private static VMwareConnection connection = null;
     private String serverName = null;

@@ -17,7 +17,7 @@
  *
  */
 
-package guacaloco.templates.commands;
+package $packageName;
 
 import java.util.Arrays;
 import java.util.List;

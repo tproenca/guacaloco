@@ -20,7 +20,7 @@ public class $className {
 
     public void execute() throws VsphereToolkitException {
         // connect to vCenter
-        VmwareManagerConnection managerConnection = VmwareManagerConnection.getInstance();
+        VMwareManagerConnection managerConnection = VMwareManagerConnection.getInstance();
         VMwareConnection connection = managerConnection.init(serverName, userName, password);
         VimPortType vimPort = connection.getVimPort();
         try {
@@ -54,7 +54,7 @@ public class $className {
     }
 
     private ManagedObjectReference findVirtualMachine() throws RuntimeFaultFaultMsg {
-        VMwareConnection connection = VmwareManagerConnection.getInstance().getConnection();
+        VMwareConnection connection = VMwareManagerConnection.getInstance().getConnection();
         VimPortType vimPort = connection.getVimPort();
         ServiceContent serviceContent = connection.getServiceContent();
         ManagedObjectReference vmMOR = vimPort.findByUuid(serviceContent.getSearchIndex(), null,
