@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/guacaloco.feature_1.0.0.qualifier.jar" id="guacaloco.feature" version="1.0.0.qualifier">
+      <category name="guacaloco.site.category"/>
+   </feature>
+   <category-def name="guacaloco.site.category" label="VMware vSphere SDK"/>
+</site>
