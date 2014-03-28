@@ -1,4 +1,4 @@
-package guacaloco.templates.commands;
+package $packageName;
 
 import com.vmware.vim25.LocalizedMethodFault;
 import com.vmware.vim25.ManagedObjectReference;
@@ -6,27 +6,34 @@ import com.vmware.vim25.RuntimeFaultFaultMsg;
 import com.vmware.vim25.ServiceContent;
 import com.vmware.vim25.TaskInfoState;
 import com.vmware.vim25.VimPortType;
+import com.vmware.vspheretoolkit.utils.TaskUtils;
+import com.vmware.vspheretoolkit.utils.VMwareConnection;
+import com.vmware.vspheretoolkit.utils.VMwareManagerConnection;
+import com.vmware.vspheretoolkit.utils.VsphereToolkitException;
 
-public class PowerOnVirtualMachine {
+public class $className {
 
-    private static final String serverName = $serverName;
-    private static final String userName = $userName;
-    private static final String password = $password;
-    private static final String vmUuid = $vmUUID;
+    private static final String serverName = "$serverName";
+    private static final String userName = "$userName";
+    private static final String password = "$password";
+    private static final String vmUuid = "$vmUUID";
 
     public static void main(String[] args) throws VsphereToolkitException {
-        new PowerOnVirtualMachine().execute();
+        new $className().execute();
     }
 
     public void execute() throws VsphereToolkitException {
         // connect to vCenter
-        VmwareManagerConnection managerConnection = VmwareManagerConnection.getInstance();
+        System.out.println("Connecting to VCenter (" + serverName +")...");
+        VMwareManagerConnection managerConnection = VMwareManagerConnection.getInstance();
         VMwareConnection connection = managerConnection.init(serverName, userName, password);
         VimPortType vimPort = connection.getVimPort();
         try {
+            System.out.println("Executing task...");
             ManagedObjectReference vmMOR = findVirtualMachine();
             ManagedObjectReference taskMOR = vimPort.powerOnVMTask(vmMOR, null);
 
+            System.out.println("Waiting for task to complete...");
             Object[] objectList = TaskUtils.wait(vimPort, taskMOR, new String[] { "info.state",
                     "info.error", "info.result" }, new String[] { "state" },
                     new Object[][] { new Object[] { TaskInfoState.SUCCESS, TaskInfoState.ERROR } });
@@ -36,9 +43,9 @@ public class PowerOnVirtualMachine {
                     // 3. Check the task completion state (success or error)
                     TaskInfoState state = (TaskInfoState) object;
                     if (TaskInfoState.SUCCESS.equals(state)) {
-                        System.out.println("Success in power on virtual machine");
+                        System.out.println("Success in power on virtual machine!");
                     } else if (TaskInfoState.ERROR.equals(state)) {
-                        System.err.println("Unable to power on virtual machine");
+                        System.err.println("Unable to power on virtual machine!");
                     }
                 } else if (object instanceof LocalizedMethodFault) {
                     LocalizedMethodFault fault = (LocalizedMethodFault) object;
@@ -55,7 +62,7 @@ public class PowerOnVirtualMachine {
     }
 
     private ManagedObjectReference findVirtualMachine() throws RuntimeFaultFaultMsg {
-        VMwareConnection connection = VmwareManagerConnection.getInstance().getConnection();
+        VMwareConnection connection = VMwareManagerConnection.getInstance().getConnection();
         VimPortType vimPort = connection.getVimPort();
         ServiceContent serviceContent = connection.getServiceContent();
         ManagedObjectReference vmMOR = vimPort.findByUuid(serviceContent.getSearchIndex(), null,

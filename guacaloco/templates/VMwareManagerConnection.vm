@@ -10,12 +10,12 @@ public class VMwareManagerConnection {
     private String password = null;
     private Boolean isConnected = false;
 
-    private VmwareManagerConnection() {
+    private VMwareManagerConnection() {
     }
 
-    public static synchronized VmwareManagerConnection getInstance() {
+    public static synchronized VMwareManagerConnection getInstance() {
         if (uniqInstance == null) {
-            uniqInstance = new VmwareManagerConnection();
+            uniqInstance = new VMwareManagerConnection();
         }
         return uniqInstance;
     }
