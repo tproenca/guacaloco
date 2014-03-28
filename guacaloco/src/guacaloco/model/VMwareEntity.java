@@ -8,7 +8,7 @@ import com.vmware.vim25.ObjectContent;
 public abstract class VMwareEntity implements IVMwareEntity {
 
     private IVMwareEntity parent;
-    private Set<IVMwareEntity> children = new LinkedHashSet<IVMwareEntity>();
+    protected Set<IVMwareEntity> children = new LinkedHashSet<IVMwareEntity>();
     private String name;
 
     private ObjectContent objectContent;

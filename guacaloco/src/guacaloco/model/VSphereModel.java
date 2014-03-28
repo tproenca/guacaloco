@@ -67,4 +67,7 @@ public class VSphereModel extends VMwareEntity {
         return esxHostList;
     }
 
+    public void clear() {
+        children.clear();
+    }
 }
