@@ -26,7 +26,18 @@ public class VirtualCenterLabelProvider extends LabelProvider {
         } else if (element instanceof VirtualCenter) {
             imageKey = ISharedImages.IMG_VC_VCENTER;
         } else if (element instanceof VirtualMachine) {
-            imageKey = ISharedImages.IMG_VC_VM;
+            VirtualMachine vm = (VirtualMachine) element;
+            switch (vm.getPowerState()) {
+            case POWERED_ON:
+                imageKey = ISharedImages.IMG_VC_VM_ON;
+                break;
+            case SUSPENDED:
+                imageKey = ISharedImages.IMG_VC_VM_SUSPEND;
+                break;
+            default:
+                imageKey = ISharedImages.IMG_VC_VM;
+                break;
+            }
         }
         return Activator.getDefault().getImageRegistry().get(imageKey);
     }

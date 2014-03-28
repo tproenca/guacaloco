@@ -11,6 +11,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
@@ -27,8 +29,9 @@ public class AddVirtualCenterWizard extends Wizard {
 
     @Override
     public void addPages() {
-        Preferences pref = ConfigurationScope.INSTANCE
+        IEclipsePreferences pref = InstanceScope.INSTANCE
                 .getNode(Activator.PLUGIN_ID);
+        
         Preferences cred = pref.node("credentials");
 
         page = new CredentialsWizardPage(cred.get("server", ""), cred.get(
