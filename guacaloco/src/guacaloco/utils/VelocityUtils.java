@@ -26,7 +26,7 @@ public class VelocityUtils {
         String path = "templates/";
         try {
             URL url = Platform.getBundle(Activator.PLUGIN_ID).getEntry(path);
-            File templateDir = new File(FileLocator.resolve(url).toURI());
+            File templateDir = new File(FileLocator.toFileURL(url).toURI());
             Properties prop = new Properties();
             prop.put("file.resource.loader.path", templateDir.getAbsolutePath());
             Velocity.init(prop);

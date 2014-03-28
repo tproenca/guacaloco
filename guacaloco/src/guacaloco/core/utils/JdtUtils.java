@@ -48,7 +48,7 @@ public class JdtUtils {
             if (!libFile.exists()) {
                 String sourceRelativePath = "resources/vim25.jar";
                 URL url = Platform.getBundle(Activator.PLUGIN_ID).getEntry(sourceRelativePath);
-                String sourceFullPath = new File(FileLocator.resolve(url).toURI()).getAbsolutePath();
+                String sourceFullPath = new File(FileLocator.toFileURL(url).toURI()).getAbsolutePath();
                 InputStream is = new BufferedInputStream(new FileInputStream(sourceFullPath));
                 libFile.create(is, false, monitor);
                 IJavaProject javaProject = JavaCore.create(project);
