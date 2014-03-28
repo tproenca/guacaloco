@@ -35,13 +35,13 @@ public class AddSampleIntoEclipseProject {
     }
 
     public static ICompilationUnit createJavaClass(IPackageFragment pack, String textContent,
-            String className) throws VsphereToolkitException {
-        ICompilationUnit klass = getClassInPackage(pack, className);
+            String fileName) throws VsphereToolkitException {
+        ICompilationUnit klass = getClassInPackage(pack, fileName);
         if (klass == null) {
             StringBuffer buffer = new StringBuffer();
             buffer.append(textContent);
             try {
-                klass = pack.createCompilationUnit(className, buffer.toString(), false, null);
+                klass = pack.createCompilationUnit(fileName, buffer.toString(), false, null);
             } catch (JavaModelException e) {
                 e.printStackTrace();
                 throw new VsphereToolkitException("Unable to create class", e.getCause());
@@ -50,12 +50,12 @@ public class AddSampleIntoEclipseProject {
         return klass;
     }
 
-    private static ICompilationUnit getClassInPackage(IPackageFragment pack, String className)
+    private static ICompilationUnit getClassInPackage(IPackageFragment pack, String fileName)
             throws VsphereToolkitException {
         try {
             ICompilationUnit[] klasses = pack.getCompilationUnits();
             for (ICompilationUnit klass : klasses) {
-                if (className.equals(klass.getElementName())) {
+                if (fileName.equals(klass.getElementName())) {
                     return klass;
                 }
             }
