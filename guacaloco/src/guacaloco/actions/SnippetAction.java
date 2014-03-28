@@ -1,6 +1,6 @@
 package guacaloco.actions;
 
-import guacaloco.core.utils.AddSampleIntoEclipseProject;
+import guacaloco.core.utils.JdtUtils;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.ui.progress.UIJob;
 
 public abstract class SnippetAction extends VMwareEntityAction {
-    
+
     private static final String ENCODING = "ISO-8859-1";
-    
+
     ICompilationUnit snippetClass = null;
 
     public SnippetAction(StructuredViewer viewer) {
@@ -45,23 +45,23 @@ public abstract class SnippetAction extends VMwareEntityAction {
                 try {
                     // Create package
                     String packageName = (String) ctx.get("packageName");
-                    IPackageFragment pkg = AddSampleIntoEclipseProject
-                            .createPackage(packageName);
+                    IPackageFragment pkg = JdtUtils.createPackage(packageName);
 
                     List<String> templateFileNames = new ArrayList<String>(
                             getRequiredTemplateFileNames());
                     templateFileNames.add(snippetTemplateName);
 
-                    monitor.beginTask("Generating code...", templateFileNames.size());
+                    monitor.beginTask("Generating code...",
+                            templateFileNames.size());
                     for (String templateName : templateFileNames) {
                         String fileName = templateName.replaceAll(".vm",
                                 ".java");
-                        monitor.setTaskName("Creating "+fileName);
+                        monitor.setTaskName("Creating " + fileName);
                         StringWriter code = new StringWriter();
                         Velocity.mergeTemplate(templateName, ENCODING, ctx,
                                 code);
-                        ICompilationUnit cu = AddSampleIntoEclipseProject
-                                .createJavaClass(pkg, code.toString(), fileName);
+                        ICompilationUnit cu = JdtUtils.createJavaClass(pkg,
+                                code.toString(), fileName);
                         if (templateName.equals(snippetTemplateName)) {
                             snippetClass = cu;
                         }
@@ -72,7 +72,7 @@ public abstract class SnippetAction extends VMwareEntityAction {
                 } finally {
                     monitor.done();
                 }
-                
+
                 return Status.OK_STATUS;
             }
         };
@@ -89,35 +89,39 @@ public abstract class SnippetAction extends VMwareEntityAction {
         });
         job.setUser(true);
         job.schedule();
-         
-//        VelocityContext ctx = getContext();
-//        String snippetTemplateName = getTemplateName();
-//        
-//        try {
-//            // Create package
-//            String packageName = (String)ctx.get("packageName");
-//            IPackageFragment pkg = AddSampleIntoEclipseProject.createPackage(packageName);
-//            
-//            List<String> templateFileNames = new  ArrayList<String>(getRequiredTemplateFileNames());
-//            templateFileNames.add(snippetTemplateName);
-//            
-//            
-//            for (String templateName : templateFileNames) {
-//                String fileName = templateName.replaceAll(".vm", ".java");
-//                StringWriter code = new StringWriter();
-//                Velocity.mergeTemplate(templateName, ENCODING, ctx, code);
-//                ICompilationUnit cu  = AddSampleIntoEclipseProject.createJavaClass(pkg, code.toString(), fileName);
-//                if (templateName.equals(snippetTemplateName)) {
-//                    snippetClass = cu;
-//                }
-//            }
-//            
-//            JavaUI.openInEditor(snippetClass);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+
+        // VelocityContext ctx = getContext();
+        // String snippetTemplateName = getTemplateName();
+        //
+        // try {
+        // // Create package
+        // String packageName = (String)ctx.get("packageName");
+        // IPackageFragment pkg =
+        // AddSampleIntoEclipseProject.createPackage(packageName);
+        //
+        // List<String> templateFileNames = new
+        // ArrayList<String>(getRequiredTemplateFileNames());
+        // templateFileNames.add(snippetTemplateName);
+        //
+        //
+        // for (String templateName : templateFileNames) {
+        // String fileName = templateName.replaceAll(".vm", ".java");
+        // StringWriter code = new StringWriter();
+        // Velocity.mergeTemplate(templateName, ENCODING, ctx, code);
+        // ICompilationUnit cu =
+        // AddSampleIntoEclipseProject.createJavaClass(pkg, code.toString(),
+        // fileName);
+        // if (templateName.equals(snippetTemplateName)) {
+        // snippetClass = cu;
+        // }
+        // }
+        //
+        // JavaUI.openInEditor(snippetClass);
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
     }
-    
+
     private Collection<String> getRequiredTemplateFileNames() {
         List<String> result = new ArrayList<String>();
         result.add("FakeTrustManager.vm");
@@ -128,8 +132,8 @@ public abstract class SnippetAction extends VMwareEntityAction {
         result.add("VsphereToolkitException.vm");
         return result;
     }
-    
+
     public abstract String getTemplateName();
-    
+
     public abstract VelocityContext getContext();
 }

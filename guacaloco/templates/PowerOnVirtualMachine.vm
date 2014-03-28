@@ -1,11 +1,5 @@
 package guacaloco.templates.commands;
 
-import guacaloco.core.DataAccessService;
-import guacaloco.core.VmwareManagerConnection;
-import guacaloco.core.VsphereToolkitException;
-import guacaloco.core.utils.VMwareConnection;
-import guacaloco.templates.commands.utils.TaskUtils;
-
 import com.vmware.vim25.LocalizedMethodFault;
 import com.vmware.vim25.ManagedObjectReference;
 import com.vmware.vim25.RuntimeFaultFaultMsg;
@@ -13,15 +7,15 @@ import com.vmware.vim25.ServiceContent;
 import com.vmware.vim25.TaskInfoState;
 import com.vmware.vim25.VimPortType;
 
-public class PowerOffVirtualMachine {
+public class PowerOnVirtualMachine {
 
-    private String serverName = DataAccessService.SERVER_NAME;
-    private String userName = DataAccessService.USER_NAME;
-    private String password = DataAccessService.PASSWORD;
-    private String vmUuid = "52b55af4-7eaa-87f2-8b90-12e4290ed300";
+    private static final String serverName = $serverName;
+    private static final String userName = $userName;
+    private static final String password = $password;
+    private static final String vmUuid = $vmUUID;
 
     public static void main(String[] args) throws VsphereToolkitException {
-        new PowerOffVirtualMachine().execute();
+        new PowerOnVirtualMachine().execute();
     }
 
     public void execute() throws VsphereToolkitException {
@@ -31,10 +25,10 @@ public class PowerOffVirtualMachine {
         VimPortType vimPort = connection.getVimPort();
         try {
             ManagedObjectReference vmMOR = findVirtualMachine();
-            ManagedObjectReference taskMOR = vimPort.powerOffVMTask(vmMOR);
+            ManagedObjectReference taskMOR = vimPort.powerOnVMTask(vmMOR, null);
 
-            Object[] objectList = TaskUtils.wait(vimPort, taskMOR, new String[] {
-                    "info.state", "info.error", "info.result" }, new String[] { "state" },
+            Object[] objectList = TaskUtils.wait(vimPort, taskMOR, new String[] { "info.state",
+                    "info.error", "info.result" }, new String[] { "state" },
                     new Object[][] { new Object[] { TaskInfoState.SUCCESS, TaskInfoState.ERROR } });
 
             for (Object object : objectList) {
@@ -42,9 +36,9 @@ public class PowerOffVirtualMachine {
                     // 3. Check the task completion state (success or error)
                     TaskInfoState state = (TaskInfoState) object;
                     if (TaskInfoState.SUCCESS.equals(state)) {
-                        System.out.println("Success in power off virtual machine");
+                        System.out.println("Success in power on virtual machine");
                     } else if (TaskInfoState.ERROR.equals(state)) {
-                        System.err.println("Unable to power off virtual machine");
+                        System.err.println("Unable to power on virtual machine");
                     }
                 } else if (object instanceof LocalizedMethodFault) {
                     LocalizedMethodFault fault = (LocalizedMethodFault) object;
@@ -55,7 +49,8 @@ public class PowerOffVirtualMachine {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new VsphereToolkitException("Unable to find the virtual machine", e.getCause());
+            throw new VsphereToolkitException("Unable to power on the virtual machine",
+                    e.getCause());
         }
     }
 

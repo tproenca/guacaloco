@@ -1,4 +1,4 @@
-package $packageName;
+package guacaloco.templates.commands;
 
 import com.vmware.vim25.LocalizedMethodFault;
 import com.vmware.vim25.ManagedObjectReference;
@@ -7,25 +7,25 @@ import com.vmware.vim25.ServiceContent;
 import com.vmware.vim25.TaskInfoState;
 import com.vmware.vim25.VimPortType;
 
-public class $className {
+public class SuspendVirtualMachine {
 
-    private static final String serverName = "$serverName";
-    private static final String userName = "$userName";
-    private static final String password = "$password";
-    private static final String vmUuid = "$vmUUID";
+    private static final String serverName = $serverName;
+    private static final String userName = $userName;
+    private static final String password = $password;
+    private static final String vmUuid = $vmUUID;
 
     public static void main(String[] args) throws VsphereToolkitException {
-        new $className().execute();
+        new SuspendVirtualMachine().execute();
     }
 
     public void execute() throws VsphereToolkitException {
         // connect to vCenter
-        VMwareManagerConnection managerConnection = VMwareManagerConnection.getInstance();
+        VmwareManagerConnection managerConnection = VmwareManagerConnection.getInstance();
         VMwareConnection connection = managerConnection.init(serverName, userName, password);
         VimPortType vimPort = connection.getVimPort();
         try {
             ManagedObjectReference vmMOR = findVirtualMachine();
-            ManagedObjectReference taskMOR = vimPort.powerOffVMTask(vmMOR);
+            ManagedObjectReference taskMOR = vimPort.suspendVMTask(vmMOR);
 
             Object[] objectList = TaskUtils.wait(vimPort, taskMOR, new String[] {
                     "info.state", "info.error", "info.result" }, new String[] { "state" },
@@ -36,9 +36,9 @@ public class $className {
                     // 3. Check the task completion state (success or error)
                     TaskInfoState state = (TaskInfoState) object;
                     if (TaskInfoState.SUCCESS.equals(state)) {
-                        System.out.println("Success in power off virtual machine");
+                        System.out.println("Success in suspend virtual machine");
                     } else if (TaskInfoState.ERROR.equals(state)) {
-                        System.err.println("Unable to power off virtual machine");
+                        System.err.println("Unable to suspend virtual machine");
                     }
                 } else if (object instanceof LocalizedMethodFault) {
                     LocalizedMethodFault fault = (LocalizedMethodFault) object;
@@ -49,13 +49,12 @@ public class $className {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new VsphereToolkitException("Unable to power off the virtual machine",
-                    e.getCause());
+            throw new VsphereToolkitException("Unable suspend the virtual machine", e.getCause());
         }
     }
 
     private ManagedObjectReference findVirtualMachine() throws RuntimeFaultFaultMsg {
-        VMwareConnection connection = VMwareManagerConnection.getInstance().getConnection();
+        VMwareConnection connection = VmwareManagerConnection.getInstance().getConnection();
         VimPortType vimPort = connection.getVimPort();
         ServiceContent serviceContent = connection.getServiceContent();
         ManagedObjectReference vmMOR = vimPort.findByUuid(serviceContent.getSearchIndex(), null,
