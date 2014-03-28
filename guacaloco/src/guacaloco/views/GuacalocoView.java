@@ -43,6 +43,14 @@ public class GuacalocoView extends ViewPart {
     private Action createConnectionAction;
 
     private List<VMwareEntityAction> actions = new ArrayList<VMwareEntityAction>();
+    private UIJob job;
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        job.cancel();
+        job = null;
+    }
 
     @Override
     public void createPartControl(Composite parent) {
@@ -54,12 +62,15 @@ public class GuacalocoView extends ViewPart {
         contributeToActionBars();
         hookContextMenu();
         populate();
+        scheduleJob();
     }
 
-    protected void init() {
+    protected synchronized void init() {
         try {
             VmwareManagerConnection conn = VmwareManagerConnection.getInstance();
             if (conn.isConnected()) {
+                VSphereModel model = VSphereModel.getInstance();
+                model.clear();
                 DataAccessService dataAccessService = new DataAccessService();
                 dataAccessService.populateModel();
             }
@@ -69,12 +80,42 @@ public class GuacalocoView extends ViewPart {
         }
     }
 
-    private void populate() {
+    private synchronized void populate() {
         VSphereModel model = VSphereModel.getInstance();
-
+//        System.out.println("populate");
         if (!model.isEmpty()) {
-            viewer.setInput(model);
+            if (viewer.getInput() == null) {
+                viewer.setInput(model);
+//                System.out.println("input");
+            } else {
+                viewer.refresh();
+//                System.out.println("refresh");
+                viewer.expandAll();
+            }
             expandAllAction.setEnabled(true);
+        }
+    }
+    
+    private void scheduleJob() {
+        if (job == null) {
+            job = new UIJob("Fetching data from Virtual Center...") {
+                @Override
+                public IStatus runInUIThread(IProgressMonitor monitor) {
+                    try {
+                        if (monitor.isCanceled()) {
+                            System.out.println("Cancel");
+                            return Status.CANCEL_STATUS;
+                        }
+                        init();
+                        populate();
+                        return Status.OK_STATUS;
+                    } finally {
+                        schedule(2000);
+                    }
+                }
+            };
+            job.setSystem(true);
+            job.schedule();
         }
     }
 
@@ -116,18 +157,11 @@ public class GuacalocoView extends ViewPart {
                 WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(),
                         new AddVirtualCenterWizard());
                 if (wizardDialog.open() == Window.OK) {
-                    System.out.println("Ok pressed");
-                    UIJob job = new UIJob("Fetching data from Virtual Center...") {
-                        @Override
-                        public IStatus runInUIThread(IProgressMonitor monitor) {
-                            init();
-                            populate();
-                            return Status.OK_STATUS;
-                        }
-                    };
-                    job.schedule();
+//                    System.out.println("Ok pressed");
+//                    init();
+//                    populate();
                 } else {
-                    System.out.println("Cancel pressed");
+//                    System.out.println("Cancel pressed");
                 }
             }
         };
