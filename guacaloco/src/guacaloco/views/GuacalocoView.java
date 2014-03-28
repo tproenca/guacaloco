@@ -1,8 +1,19 @@
 package guacaloco.views;
 
 import guacaloco.actions.VMwareEntityAction;
+import guacaloco.actions.host.HostEnterMaintenanceModeAction;
+import guacaloco.actions.host.HostEnterStandbyModeAction;
+import guacaloco.actions.host.HostNewVirtualMachineAction;
+import guacaloco.actions.host.HostPowerOnAction;
+import guacaloco.actions.host.HostRebootAction;
+import guacaloco.actions.host.HostRemoveAction;
+import guacaloco.actions.host.HostShutdownAction;
+import guacaloco.actions.vm.VMAddPermissionAction;
 import guacaloco.actions.vm.VMCloneAction;
+import guacaloco.actions.vm.VMMigrateAction;
 import guacaloco.actions.vm.VMPowerAction;
+import guacaloco.actions.vm.VMRenameAction;
+import guacaloco.actions.vm.VMTakeSnapshotAction;
 import guacaloco.core.DataAccessService;
 import guacaloco.core.VmwareManagerConnection;
 import guacaloco.core.VsphereToolkitException;
@@ -174,7 +185,19 @@ public class GuacalocoView extends ViewPart {
                         "$nl$/icons/full/obj16/add_obj.gif"));
 
         actions.add(new VMPowerAction(viewer));
+        actions.add(new VMTakeSnapshotAction(viewer));
+        actions.add(new VMMigrateAction(viewer));
         actions.add(new VMCloneAction(viewer));
+        actions.add(new VMAddPermissionAction(viewer));
+        actions.add(new VMRenameAction(viewer));
+        
+        actions.add(new HostNewVirtualMachineAction(viewer));
+        actions.add(new HostEnterMaintenanceModeAction(viewer));
+        actions.add(new HostShutdownAction(viewer));
+        actions.add(new HostEnterStandbyModeAction(viewer));
+        actions.add(new HostRebootAction(viewer));
+        actions.add(new HostPowerOnAction(viewer));  
+        actions.add(new HostRemoveAction(viewer));    
     }
 
     private void hookContextMenu() {
