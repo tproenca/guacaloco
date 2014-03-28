@@ -1,11 +1,5 @@
 package guacaloco.templates.commands;
 
-import guacaloco.core.DataAccessService;
-import guacaloco.core.VmwareManagerConnection;
-import guacaloco.core.VsphereToolkitException;
-import guacaloco.core.utils.VMwareConnection;
-import guacaloco.templates.commands.utils.TaskUtils;
-
 import com.vmware.vim25.LocalizedMethodFault;
 import com.vmware.vim25.ManagedObjectReference;
 import com.vmware.vim25.RuntimeFaultFaultMsg;
@@ -15,10 +9,10 @@ import com.vmware.vim25.VimPortType;
 
 public class PowerOffVirtualMachine {
 
-    private String serverName = DataAccessService.SERVER_NAME;
-    private String userName = DataAccessService.USER_NAME;
-    private String password = DataAccessService.PASSWORD;
-    private String vmUuid = "52b55af4-7eaa-87f2-8b90-12e4290ed300";
+    private static final String serverName = "10.20.77.44";
+    private static final String userName = "root";
+    private static final String password = "vmware";
+    private static final String vmUuid = "52b55af4-7eaa-87f2-8b90-12e4290ed300";
 
     public static void main(String[] args) throws VsphereToolkitException {
         new PowerOffVirtualMachine().execute();
