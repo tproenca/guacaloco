@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -31,36 +32,39 @@ import org.eclipse.jdt.core.JavaModelException;
 
 public class JdtUtils {
 
-    public static void importLibrariesIntoProject() throws VsphereToolkitException {
+    public static void importLibrariesIntoProject(IProgressMonitor monitor) throws VsphereToolkitException {
         try {
-            String sourceRelativePath = "resources/vim25.jar";
-            URL url = Platform.getBundle(Activator.PLUGIN_ID).getEntry(sourceRelativePath);
-            String sourceFullPath = new File(FileLocator.resolve(url).toURI()).getAbsolutePath();
-
-            InputStream is = new BufferedInputStream(new FileInputStream(sourceFullPath));
+            monitor.beginTask("Importing libraries into the project...", 2);
             IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
             IProject project = workspaceRoot.getProjects()[0]; // FIXME: get active project
-            IJavaProject javaProject = JavaCore.create(project);
 
             IFolder libFolder = project.getFolder("lib");
             if (!libFolder.exists()) {
                 libFolder.create(true, true, new NullProgressMonitor());
             }
+            monitor.worked(1);
 
             IFile libFile = project.getFile("lib/vim25.jar"); // FIXME
             if (!libFile.exists()) {
-                libFile.create(is, false, null);
+                String sourceRelativePath = "resources/vim25.jar";
+                URL url = Platform.getBundle(Activator.PLUGIN_ID).getEntry(sourceRelativePath);
+                String sourceFullPath = new File(FileLocator.resolve(url).toURI()).getAbsolutePath();
+                InputStream is = new BufferedInputStream(new FileInputStream(sourceFullPath));
+                libFile.create(is, false, monitor);
+                IJavaProject javaProject = JavaCore.create(project);
+                IClasspathEntry[] entries = javaProject.getRawClasspath();
+                IPath libraryFullPath = libFile.getFullPath();
+                List<IClasspathEntry> entriesList = new ArrayList<IClasspathEntry>();
+                entriesList.addAll(Arrays.asList(entries));
+                entriesList.add(JavaCore.newLibraryEntry(libraryFullPath, null, null));
+                javaProject.setRawClasspath(entriesList.toArray(new IClasspathEntry[0]), null);
             }
-            IClasspathEntry[] entries = javaProject.getRawClasspath();
-            IPath libraryFullPath = libFile.getFullPath();
-            List<IClasspathEntry> entriesList = new ArrayList<IClasspathEntry>();
-            entriesList.addAll(Arrays.asList(entries));
-            entriesList.add(JavaCore.newLibraryEntry(libraryFullPath, null, null));
-
-            javaProject.setRawClasspath(entriesList.toArray(new IClasspathEntry[0]), null);
+            monitor.worked(2);
         } catch (Exception e) {
             e.printStackTrace();
             throw new VsphereToolkitException("Unable to import library", e.getCause());
+        } finally {
+            monitor.done();
         }
     }
 

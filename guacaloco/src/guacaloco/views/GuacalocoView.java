@@ -67,7 +67,8 @@ public class GuacalocoView extends ViewPart {
 
     protected synchronized void init() {
         try {
-            VmwareManagerConnection conn = VmwareManagerConnection.getInstance();
+            VmwareManagerConnection conn = VmwareManagerConnection
+                    .getInstance();
             if (conn.isConnected()) {
                 VSphereModel model = VSphereModel.getInstance();
                 model.clear();
@@ -76,26 +77,26 @@ public class GuacalocoView extends ViewPart {
             }
 
         } catch (VsphereToolkitException ex) {
-            MessageDialog.openError(viewer.getControl().getShell(), "Error", ex.getMessage());
+            MessageDialog.openError(viewer.getControl().getShell(), "Error",
+                    ex.getMessage());
         }
     }
 
     private synchronized void populate() {
         VSphereModel model = VSphereModel.getInstance();
-//        System.out.println("populate");
+        // System.out.println("populate");
         if (!model.isEmpty()) {
             if (viewer.getInput() == null) {
                 viewer.setInput(model);
-//                System.out.println("input");
+                // System.out.println("input");
             } else {
                 viewer.refresh();
-//                System.out.println("refresh");
-                viewer.expandAll();
+             // System.out.println("refresh");
             }
             expandAllAction.setEnabled(true);
         }
     }
-    
+
     private void scheduleJob() {
         if (job == null) {
             job = new UIJob("Fetching data from Virtual Center...") {
@@ -103,14 +104,13 @@ public class GuacalocoView extends ViewPart {
                 public IStatus runInUIThread(IProgressMonitor monitor) {
                     try {
                         if (monitor.isCanceled()) {
-                            System.out.println("Cancel");
                             return Status.CANCEL_STATUS;
                         }
                         init();
                         populate();
                         return Status.OK_STATUS;
                     } finally {
-                        schedule(2000);
+                        schedule(8000);
                     }
                 }
             };
@@ -134,7 +134,8 @@ public class GuacalocoView extends ViewPart {
             }
         };
         colapseAllAction.setToolTipText("Collapse All");
-        colapseAllAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+        colapseAllAction.setImageDescriptor(PlatformUI.getWorkbench()
+                .getSharedImages()
                 .getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL));
         colapseAllAction.setEnabled(false);
 
@@ -147,21 +148,22 @@ public class GuacalocoView extends ViewPart {
             }
         };
         expandAllAction.setToolTipText("Expand All");
-        expandAllAction.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
-                "org.eclipse.ui.cheatsheets", "$nl$/icons/elcl16/expandall.gif"));
+        expandAllAction.setImageDescriptor(AbstractUIPlugin
+                .imageDescriptorFromPlugin("org.eclipse.ui.cheatsheets",
+                        "$nl$/icons/elcl16/expandall.gif"));
         expandAllAction.setEnabled(false);
 
         createConnectionAction = new Action() {
             @Override
             public void run() {
-                WizardDialog wizardDialog = new WizardDialog(viewer.getControl().getShell(),
-                        new AddVirtualCenterWizard());
+                WizardDialog wizardDialog = new WizardDialog(viewer
+                        .getControl().getShell(), new AddVirtualCenterWizard());
                 if (wizardDialog.open() == Window.OK) {
-//                    System.out.println("Ok pressed");
-//                    init();
-//                    populate();
+                    // System.out.println("Ok pressed");
+                     init();
+                     populate();
                 } else {
-//                    System.out.println("Cancel pressed");
+                    // System.out.println("Cancel pressed");
                 }
             }
         };
@@ -174,6 +176,7 @@ public class GuacalocoView extends ViewPart {
         actions.add(new VMPowerAction(viewer));
         actions.add(new VMCloneAction(viewer));
     }
+
     private void hookContextMenu() {
         MenuManager menuMgr = new MenuManager("#PopupMenu");
         menuMgr.setRemoveAllWhenShown(true);

@@ -4,6 +4,7 @@ import guacaloco.Activator;
 import guacaloco.actions.SnippetAction;
 import guacaloco.model.IVMwareEntity;
 import guacaloco.model.VirtualMachine;
+import guacaloco.utils.TemplateConstants;
 
 import org.apache.velocity.VelocityContext;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -13,7 +14,7 @@ public class VMSuspendAction extends SnippetAction {
     
     private static final String ICON = "/icons/vm_suspend.png";
     private static final String DESCRIPTION = "Suspend";
-    private static final String TEMPLATE_NAME = "";
+    private static final String TEMPLATE_NAME = "SuspendVirtualMachine.vm";
 
     public VMSuspendAction(StructuredViewer viewer) {
         super(viewer);
@@ -40,7 +41,8 @@ public class VMSuspendAction extends SnippetAction {
 
     @Override
     public VelocityContext getContext() {
-        // TODO Auto-generated method stub
-        return null;
+        VelocityContext ctx = getDefaultContext();
+        ctx.put("packageName", TemplateConstants.SAMPLES_PKG_NAME);
+        return ctx;
     }
 }

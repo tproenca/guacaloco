@@ -2,11 +2,9 @@ package guacaloco.actions.vm;
 
 import guacaloco.Activator;
 import guacaloco.actions.SnippetAction;
-import guacaloco.core.VmwareManagerConnection;
 import guacaloco.model.IVMwareEntity;
 import guacaloco.model.VirtualMachine;
 import guacaloco.utils.TemplateConstants;
-import guacaloco.utils.VelocityUtils;
 
 import org.apache.velocity.VelocityContext;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -42,15 +40,8 @@ public class VMPowerOffAction extends SnippetAction {
 
     @Override
     public VelocityContext getContext() {
-        VmwareManagerConnection conn = VmwareManagerConnection.getInstance();
-        VirtualMachine vm = (VirtualMachine) getViewerSelection();
-        VelocityContext context = VelocityUtils.getVelocityContext();
-        context.put("packageName", TemplateConstants.DEFAULT_PACKAGE_NAME);
-        context.put("className", "PowerOffVirtualMachine");
-        context.put("serverName", conn.getServerName());
-        context.put("userName", conn.getUserName());
-        context.put("password", conn.getPassword());
-        context.put("vmUUID", vm.getInstanceUuid());
-        return context;
+        VelocityContext ctx = getDefaultContext();
+        ctx.put("packageName", TemplateConstants.SAMPLES_PKG_NAME);
+        return ctx;
     }
 }

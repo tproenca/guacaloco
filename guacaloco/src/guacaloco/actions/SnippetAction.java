@@ -1,6 +1,10 @@
 package guacaloco.actions;
 
+import guacaloco.core.VmwareManagerConnection;
 import guacaloco.core.utils.JdtUtils;
+import guacaloco.model.VirtualMachine;
+import guacaloco.utils.TemplateConstants;
+import guacaloco.utils.VelocityUtils;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -12,6 +16,7 @@ import org.apache.velocity.app.Velocity;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -40,30 +45,42 @@ public abstract class SnippetAction extends VMwareEntityAction {
         UIJob job = new UIJob("Generating code...") {
             public IStatus runInUIThread(IProgressMonitor monitor) {
                 VelocityContext ctx = getContext();
+                VelocityContext defaultCtx = getDefaultContext();
                 String snippetTemplateName = getTemplateName();
+                List<String> templateFileNames = new ArrayList<String>(
+                        getRequiredTemplateFileNames());
+                templateFileNames.add(snippetTemplateName);
 
                 try {
-                    // Create package
+                    // Create packages
                     String packageName = (String) ctx.get("packageName");
-                    IPackageFragment pkg = JdtUtils.createPackage(packageName);
+                    IPackageFragment samplesPkg = JdtUtils.createPackage(packageName);
+                    IPackageFragment utilsPkg = JdtUtils.createPackage(TemplateConstants.UTIL_PKG_NAME);
 
-                    List<String> templateFileNames = new ArrayList<String>(
-                            getRequiredTemplateFileNames());
-                    templateFileNames.add(snippetTemplateName);
-
-                    monitor.beginTask("Generating code...",
-                            templateFileNames.size());
+                    int ticks = (int)(templateFileNames.size()/2);
+                    monitor.beginTask("Preparing workspace...",
+                            templateFileNames.size() + ticks);
+                    
+                    // Importing libraries
+                    JdtUtils.importLibrariesIntoProject(new SubProgressMonitor(monitor, ticks));
+                    
+                    // Generating code
                     for (String templateName : templateFileNames) {
                         String fileName = templateName.replaceAll(".vm",
                                 ".java");
-                        monitor.setTaskName("Creating " + fileName);
+                        monitor.setTaskName("Generating " + fileName);
                         StringWriter code = new StringWriter();
-                        Velocity.mergeTemplate(templateName, ENCODING, ctx,
-                                code);
-                        ICompilationUnit cu = JdtUtils.createJavaClass(pkg,
-                                code.toString(), fileName);
+                        
                         if (templateName.equals(snippetTemplateName)) {
-                            snippetClass = cu;
+                            Velocity.mergeTemplate(templateName, ENCODING, ctx,
+                                    code);
+                            snippetClass = JdtUtils.createJavaClass(samplesPkg,
+                                    code.toString(), fileName);;
+                        } else {
+                            Velocity.mergeTemplate(templateName, ENCODING, defaultCtx,
+                                    code);
+                            JdtUtils.createJavaClass(utilsPkg,
+                                    code.toString(), fileName);
                         }
                         monitor.worked(1);
                     }
@@ -89,37 +106,6 @@ public abstract class SnippetAction extends VMwareEntityAction {
         });
         job.setUser(true);
         job.schedule();
-
-        // VelocityContext ctx = getContext();
-        // String snippetTemplateName = getTemplateName();
-        //
-        // try {
-        // // Create package
-        // String packageName = (String)ctx.get("packageName");
-        // IPackageFragment pkg =
-        // AddSampleIntoEclipseProject.createPackage(packageName);
-        //
-        // List<String> templateFileNames = new
-        // ArrayList<String>(getRequiredTemplateFileNames());
-        // templateFileNames.add(snippetTemplateName);
-        //
-        //
-        // for (String templateName : templateFileNames) {
-        // String fileName = templateName.replaceAll(".vm", ".java");
-        // StringWriter code = new StringWriter();
-        // Velocity.mergeTemplate(templateName, ENCODING, ctx, code);
-        // ICompilationUnit cu =
-        // AddSampleIntoEclipseProject.createJavaClass(pkg, code.toString(),
-        // fileName);
-        // if (templateName.equals(snippetTemplateName)) {
-        // snippetClass = cu;
-        // }
-        // }
-        //
-        // JavaUI.openInEditor(snippetClass);
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
     }
 
     private Collection<String> getRequiredTemplateFileNames() {
@@ -131,6 +117,20 @@ public abstract class SnippetAction extends VMwareEntityAction {
         result.add("VMwareManagerConnection.vm");
         result.add("VsphereToolkitException.vm");
         return result;
+    }
+    
+    protected VelocityContext getDefaultContext() {
+        VmwareManagerConnection conn = VmwareManagerConnection.getInstance();
+        VirtualMachine vm = (VirtualMachine) getViewerSelection();
+        VelocityContext context = VelocityUtils.getVelocityContext();
+        String className = getTemplateName().replaceAll(".vm","");
+        context.put("packageName", TemplateConstants.UTIL_PKG_NAME);
+        context.put("className", className);
+        context.put("serverName", conn.getServerName());
+        context.put("userName", conn.getUserName());
+        context.put("password", conn.getPassword());
+        context.put("vmUUID", vm.getInstanceUuid());
+        return context;
     }
 
     public abstract String getTemplateName();
