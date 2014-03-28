@@ -7,7 +7,7 @@ import com.vmware.vim25.ServiceContent;
 import com.vmware.vim25.TaskInfoState;
 import com.vmware.vim25.VimPortType;
 
-public class PowerOffVirtualMachine {
+public class SuspendVirtualMachine {
 
     private static final String serverName = $serverName;
     private static final String userName = $userName;
@@ -15,7 +15,7 @@ public class PowerOffVirtualMachine {
     private static final String vmUuid = $vmUUID;
 
     public static void main(String[] args) throws VsphereToolkitException {
-        new PowerOffVirtualMachine().execute();
+        new SuspendVirtualMachine().execute();
     }
 
     public void execute() throws VsphereToolkitException {
@@ -25,7 +25,7 @@ public class PowerOffVirtualMachine {
         VimPortType vimPort = connection.getVimPort();
         try {
             ManagedObjectReference vmMOR = findVirtualMachine();
-            ManagedObjectReference taskMOR = vimPort.powerOffVMTask(vmMOR);
+            ManagedObjectReference taskMOR = vimPort.suspendVMTask(vmMOR);
 
             Object[] objectList = TaskUtils.wait(vimPort, taskMOR, new String[] {
                     "info.state", "info.error", "info.result" }, new String[] { "state" },
@@ -36,9 +36,9 @@ public class PowerOffVirtualMachine {
                     // 3. Check the task completion state (success or error)
                     TaskInfoState state = (TaskInfoState) object;
                     if (TaskInfoState.SUCCESS.equals(state)) {
-                        System.out.println("Success in power off virtual machine");
+                        System.out.println("Success in suspend virtual machine");
                     } else if (TaskInfoState.ERROR.equals(state)) {
-                        System.err.println("Unable to power off virtual machine");
+                        System.err.println("Unable to suspend virtual machine");
                     }
                 } else if (object instanceof LocalizedMethodFault) {
                     LocalizedMethodFault fault = (LocalizedMethodFault) object;
@@ -49,8 +49,7 @@ public class PowerOffVirtualMachine {
 
         } catch (Exception e) {
             e.printStackTrace();
-            throw new VsphereToolkitException("Unable to power off the virtual machine",
-                    e.getCause());
+            throw new VsphereToolkitException("Unable suspend the virtual machine", e.getCause());
         }
     }
 
