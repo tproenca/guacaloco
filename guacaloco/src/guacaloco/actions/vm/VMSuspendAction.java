@@ -45,4 +45,9 @@ public class VMSuspendAction extends SnippetAction {
         ctx.put("packageName", TemplateConstants.SAMPLES_PKG_NAME);
         return ctx;
     }
+
+    @Override
+    public void run() {
+        // TODO Remove this method after adding template in the directory
+    }
 }

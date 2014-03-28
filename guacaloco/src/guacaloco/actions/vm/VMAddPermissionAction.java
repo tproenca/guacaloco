@@ -40,4 +40,8 @@ public class VMAddPermissionAction extends SnippetAction {
         setText(DESCRIPTION);
     }
 
+    @Override
+    public void run() {
+        // TODO Remove this method after adding template in the directory
+    }
 }

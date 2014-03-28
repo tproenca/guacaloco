@@ -45,4 +45,8 @@ public class VMMigrateAction extends SnippetAction {
                 Activator.PLUGIN_ID, ICON));
     }
 
+    @Override
+    public void run() {
+        // TODO Remove this method after adding template in the directory
+    }
 }
