@@ -25,7 +25,7 @@ public class VMPowerOnAction extends SnippetAction {
         setText(DESCRIPTION);
         setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(
                 Activator.PLUGIN_ID, ICON));
-        
+        setEnabled(true);
     }
     
     @Override

@@ -17,6 +17,7 @@ public abstract class VMwareEntityAction extends Action implements IVMwareEntity
     public VMwareEntityAction(StructuredViewer viewer, int style) {
         super(null, style);
         this.viewer = viewer;
+        setEnabled(false);
         init();
     }
 

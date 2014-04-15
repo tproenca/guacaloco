@@ -30,6 +30,7 @@ public class VMPowerAction extends VMwareEntityAction implements IMenuCreator {
     @Override
     protected void init() {
         setText(DESCRIPTION);
+        setEnabled(true);
     }
 
     private void createActions(StructuredViewer viewer) {

@@ -5,6 +5,7 @@ import guacaloco.actions.SnippetAction;
 import guacaloco.core.VmwareManagerConnection;
 import guacaloco.model.IVMwareEntity;
 import guacaloco.model.VirtualMachine;
+import guacaloco.utils.TemplateConstants;
 import guacaloco.utils.VelocityUtils;
 
 import org.apache.velocity.VelocityContext;
@@ -42,13 +43,13 @@ public class VMCloneAction extends SnippetAction {
 
     @Override
     public VelocityContext getContext() {
-        VmwareManagerConnection conn = VmwareManagerConnection.getInstance();
-        VelocityContext context = VelocityUtils.getVelocityContext();
-        context.put("className", "VMPowerOff");
-        context.put("serverName", conn.getServerName());
-        context.put("userName", conn.getUserName());
-        context.put("password", conn.getPassword());
-        context.put("vmUID", "XXXX");
-        return context;
+        VelocityContext ctx = getDefaultContext();
+        ctx.put("packageName", TemplateConstants.SAMPLES_PKG_NAME);
+        return ctx;
+    }
+
+    @Override
+    public void run() {
+        // TODO Remove this method after adding template in the directory
     }
 }
